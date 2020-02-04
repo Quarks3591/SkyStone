@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.opencv.core.Core;
@@ -23,24 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous
-public class AutoRolla extends LinearOpMode {
-    Orientation             lastAngles = new Orientation();
-    double                  correction;
-
-    Gyro gyro;
-    DriveTrain robot;
-
-    // These constants define the desired driving/control characteristics
-    // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.3;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.15;     // Nominal half speed for better accuracy.
-
-    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-
-    //init input variables
-    private String color = "Red";
-    private String side = "Left";
-
+public class OpenCV3939 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     //0 means skystone, 1 means yellow stone
@@ -66,116 +49,34 @@ public class AutoRolla extends LinearOpMode {
     OpenCvCamera phoneCam;
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         phoneCam.openCameraDevice();//open camera
-        phoneCam.setPipeline(new OpenCV3939.StageSwitchingPipeline());//different stages
+        phoneCam.setPipeline(new StageSwitchingPipeline());//different stages
         phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
         //width, height
         //width = height in this case, because camera is in portrait mode.
 
-        gyro = new Gyro(this);
-        robot = new DriveTrain(this, gyro);
-
-        robot.init(hardwareMap);
-        gyro.init(hardwareMap);
-
-        telemetry.addData("Mode", "calibrating...");
-        telemetry.update();
-
-        gyro.checkCalibration();
-
-        //side/color input for match
-        while (!opModeIsActive()) {
-            if(gamepad1.x || gamepad2.x) color = "Blue";
-            if (gamepad1.b || gamepad2.b) color = "Red";
-            telemetry.addData("Color {Blue (X), Red (B)}", color);
-
-            if(gamepad1.a || gamepad2.a) side = "Left";
-            if (gamepad1.y || gamepad2.y) side = "Right";
-            telemetry.addData("Side {Left (A), Right (Y)}", side);
-
-            telemetry.update();
-        }
-
-        //wait for start button
         waitForStart();
         runtime.reset();
-
-        telemetry.addData("Mode", "running");
-        telemetry.update();
-
-        sleep(1000);
-
-        //loop until end of autonomous period
         while (opModeIsActive()) {
-            correction = gyro.checkDirection();
-
             telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
             telemetry.addData("Height", rows);
             telemetry.addData("Width", cols);
 
             telemetry.update();
             sleep(100);
+            //call movement functions
+//            strafe(0.4, 200);
+//            moveDistance(0.4, 700);
 
-
-
-            if(color == "Red") {
-                robot.gyroDrive(DRIVE_SPEED, 32, 0);
-                sleep(100);
-
-                robot.gyroTurn(TURN_SPEED, -90);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED, -32, -90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.2);
-                sleep(750);
-
-                robot.gyroDrive(DRIVE_SPEED, 48, -90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.7);
-                sleep(750);
-
-                robot.strafeRight(1.0);
-                sleep(1200);
-
-                robot.stopMotors();
-                sleep(30000);
-            }
-            if (color == "Blue")
-            {
-                robot.gyroDrive(DRIVE_SPEED,32,0 );
-                sleep(100);
-
-                robot.gyroTurn(TURN_SPEED,90);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED,-32,90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.25);
-                sleep(750);
-
-                robot.gyroDrive(DRIVE_SPEED,48,90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.7);
-                sleep(750);
-
-                robot.strafeLeft(1.0);
-                sleep(1200);
-
-                robot.stopMotors();
-                sleep(30000);
-            }
         }
     }
+
     //detection pipeline
     static class StageSwitchingPipeline extends OpenCvPipeline
     {
@@ -191,8 +92,8 @@ public class AutoRolla extends LinearOpMode {
             RAW_IMAGE,//displays raw view
         }
 
-        private OpenCV3939.StageSwitchingPipeline.Stage stageToRenderToViewport = OpenCV3939.StageSwitchingPipeline.Stage.detection;
-        private OpenCV3939.StageSwitchingPipeline.Stage[] stages = OpenCV3939.StageSwitchingPipeline.Stage.values();
+        private Stage stageToRenderToViewport = Stage.detection;
+        private Stage[] stages = Stage.values();
 
         @Override
         public void onViewportTapped()
