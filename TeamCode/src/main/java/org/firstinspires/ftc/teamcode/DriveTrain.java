@@ -30,7 +30,8 @@ public class DriveTrain {
 
     public DcMotor lift;
     public Servo stoneClaw;
-    public Servo foundationClaw;
+    public Servo foundationClawRight;
+    public Servo foundationClawLeft;
     public BNO055IMU imu;
 
     public Gyro gyro;
@@ -103,11 +104,13 @@ public class DriveTrain {
         //Extra Initiation
         lift = hwm.get(DcMotor.class, "lift");
         stoneClaw = hwm.get(Servo.class, "claw");
-        foundationClaw = hwm.get(Servo.class, "foundation");
+        foundationClawLeft = hwm.get(Servo.class, "foundationLeft");
+        foundationClawRight = hwm.get(Servo.class, "foundationRight");
 
         //servos
         stoneClaw.setPosition(.7);
-        foundationClaw.setPosition(.7);
+        foundationClawRight.setPosition(.7);
+        foundationClawLeft.setPosition(.7);
     }
 
     //Reset all drive train motors

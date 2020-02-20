@@ -18,7 +18,8 @@ public class TeleOp2019 extends OpMode
     //Extra Motors/Servos
     DcMotor lift;
     Servo stoneClaw;
-    Servo foundationClaw;
+    Servo foundationClawLeft;
+    Servo foundationClawRight;
     int clawToggle = 0;
     int foundationToggle = 0;
     int slowmoToggle = 0;
@@ -49,14 +50,15 @@ public class TeleOp2019 extends OpMode
         //Extra Initiation
         lift = hardwareMap.dcMotor.get("lift");
         stoneClaw = hardwareMap.servo.get("claw");
-        foundationClaw = hardwareMap.servo.get("foundation");
+        foundationClawRight = hardwareMap.servo.get("foundationRight");
+        foundationClawLeft = hardwareMap.servo.get("foundationLeft");
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         stoneClaw.scaleRange(0, 1);
 
         stoneClaw.setPosition(.6);
-        foundationClaw.setPosition(.7);
+        foundationClawRight.setPosition(.7);
     }
     public void loop()
     {
@@ -158,12 +160,14 @@ public class TeleOp2019 extends OpMode
             if (foundationToggle == 1)
             {
                 foundationToggle = 2;
-                foundationClaw.setPosition(.7);
+                foundationClawRight.setPosition(.7);
+                foundationClawLeft.setPosition(.7);
             }
             if (foundationToggle == 3)
             {
                 foundationToggle = 0;
-                foundationClaw.setPosition(0.2);
+                foundationClawRight.setPosition(0.2);
+                foundationClawLeft.setPosition(0.2);
             }
         }
         //Slowmo toggle

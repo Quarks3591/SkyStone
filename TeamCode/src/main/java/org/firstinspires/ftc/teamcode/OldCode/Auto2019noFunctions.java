@@ -173,7 +173,7 @@ public class Auto2019noFunctions extends LinearOpMode {
                 sleep(100);
                 gyroTurn(TURN_SPEED, 180);
                 sleep(100);
-                foundationClaw.setPosition(.2);
+                foundationClawRight.setPosition(.2);
                 sleep(100);
 
                 frontLeftMotor.setPower(.5);
@@ -189,7 +189,7 @@ public class Auto2019noFunctions extends LinearOpMode {
                 backRightMotor.setPower(0.0);
 
                 sleep(100);
-                foundationClaw.setPosition(.7);
+                foundationClawRight.setPosition(.7);
                 sleep(100);
                 gyroDrive(-DRIVE_SPEED, 24, 0);
                  */
@@ -223,7 +223,7 @@ public class Auto2019noFunctions extends LinearOpMode {
                 sleep(100);
                 gyroTurn(TURN_SPEED, 180);
                 sleep(100);
-                foundationClaw.setPosition(.3);
+                foundationClawRight.setPosition(.3);
                 sleep(100);
 
                 frontLeftMotor.setPower(.5);
@@ -239,7 +239,7 @@ public class Auto2019noFunctions extends LinearOpMode {
                 backRightMotor.setPower(0.0);
 
                 sleep(100);
-                foundationClaw.setPosition(.7);
+                foundationClawRight.setPosition(.7);
                 sleep(100);
                 gyroDrive(-DRIVE_SPEED, 24, 0);
 

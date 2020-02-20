@@ -121,58 +121,34 @@ public class AutoRolla extends LinearOpMode {
             telemetry.update();
             sleep(100);
 
-
-
-            if(color == "Red") {
-                robot.gyroDrive(DRIVE_SPEED, 32, 0);
-                sleep(100);
-
-                robot.gyroTurn(TURN_SPEED, -90);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED, -32, -90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.2);
-                sleep(750);
-
-                robot.gyroDrive(DRIVE_SPEED, 48, -90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.7);
-                sleep(750);
-
-                robot.strafeRight(1.0);
-                sleep(1200);
-
-                robot.stopMotors();
-                sleep(30000);
-            }
-            if (color == "Blue")
-            {
-                robot.gyroDrive(DRIVE_SPEED,32,0 );
-                sleep(100);
-
-                robot.gyroTurn(TURN_SPEED,90);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED,-32,90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.25);
-                sleep(750);
-
-                robot.gyroDrive(DRIVE_SPEED,48,90);
-                sleep(100);
-
-                robot.foundationClaw.setPosition(.7);
-                sleep(750);
-
+            if (valLeft == 0 && valMid > 0 && valRight > 0){
                 robot.strafeLeft(1.0);
-                sleep(1200);
-
+                sleep(1000); //replace this with a strafe using encoders if possible
                 robot.stopMotors();
-                sleep(30000);
+                sleep(100);
+
+                robot.gyroDrive(1.0, 48, 90);
+                sleep(100);
+
+                robot.stoneClaw.setPosition(0.1);
+                sleep(100);
+            }
+            if (valMid == 0 && valLeft > 0 && valRight > 0){
+                robot.gyroDrive(1.0, 48, 90);
+                sleep(100);
+
+                robot.stoneClaw.setPosition(0.1);
+                sleep(100);
+            }
+            if (valRight == 0 && valLeft > 0 && valMid > 0){
+                robot.strafeRight(1.0);
+                sleep(1000); //replace this with a strafe using encoders if possible
+
+                robot.gyroDrive(1.0, 48, 90);
+                sleep(100);
+
+                robot.stoneClaw.setPosition(0.1);
+                sleep(100);
             }
         }
     }
@@ -301,7 +277,7 @@ public class AutoRolla extends LinearOpMode {
 
                 case RAW_IMAGE:
                 {
-                    return input;
+                        return input;
                 }
 
                 default:
