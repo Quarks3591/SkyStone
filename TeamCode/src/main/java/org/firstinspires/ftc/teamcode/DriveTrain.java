@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -42,6 +43,7 @@ public class DriveTrain {
 
     //init other objects
     HardwareMap hwm = null;
+    DigitalChannel digitalTouch;  // Hardware Device Object
 
     private VuforiaLocalizer vuforia;
 
@@ -111,6 +113,10 @@ public class DriveTrain {
         stoneClaw.setPosition(.7);
         foundationClawRight.setPosition(.7);
         foundationClawLeft.setPosition(.7);
+
+        //touch sensor
+        digitalTouch = hwm.get(DigitalChannel.class, "digital_touch");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
     }
 
     //Reset all drive train motors

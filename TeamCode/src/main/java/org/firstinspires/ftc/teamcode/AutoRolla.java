@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.opencv.core.Core;
@@ -53,7 +55,7 @@ public class AutoRolla extends LinearOpMode {
     private static float rectWidth = 1.5f/8f;
 
     private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-    private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
+    private static float offsetY = 0.5f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
     private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
     private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
@@ -72,10 +74,8 @@ public class AutoRolla extends LinearOpMode {
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         phoneCam.openCameraDevice();//open camera
-        phoneCam.setPipeline(new OpenCV3939.StageSwitchingPipeline());//different stages
-        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
-        //width, height
-        //width = height in this case, because camera is in portrait mode.
+        phoneCam.setPipeline(new StageSwitchingPipeline());//different stages
+        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPSIDE_DOWN);//display on RC
 
         gyro = new Gyro(this);
         robot = new DriveTrain(this, gyro);
@@ -97,6 +97,8 @@ public class AutoRolla extends LinearOpMode {
             if(gamepad1.a || gamepad2.a) side = "Left";
             if (gamepad1.y || gamepad2.y) side = "Right";
             telemetry.addData("Side {Left (A), Right (Y)}", side);
+
+            telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
 
             telemetry.update();
         }
@@ -122,33 +124,117 @@ public class AutoRolla extends LinearOpMode {
             sleep(100);
 
             if (valLeft == 0 && valMid > 0 && valRight > 0){
-                robot.strafeLeft(1.0);
-                sleep(1000); //replace this with a strafe using encoders if possible
-                robot.stopMotors();
-                sleep(100);
-
-                robot.gyroDrive(1.0, 48, 90);
-                sleep(100);
+                robot.gyroDrive(1.0, 35, 0);
+                sleep(250);
 
                 robot.stoneClaw.setPosition(0.1);
-                sleep(100);
+                sleep(250);
+
+                //lift
+
+                robot.gyroDrive(1.0, -18, 0);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -90);
+                sleep(250);
+
+                robot.gyroDrive(.7, 78, -90);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -180);
+                sleep(250);
+
+                robot.gyroDrive(1.0, -10, -180);
+                sleep(250);
+
+                while(robot.digitalTouch.getState() == true){
+                    robot.drive(-.1);
+                }
+                robot.stopMotors();
+                sleep(250);
+
+                //FOUNDATION CLAW POSITION
+
+                robot.gyroTurn(.3, -90);
             }
             if (valMid == 0 && valLeft > 0 && valRight > 0){
-                robot.gyroDrive(1.0, 48, 90);
-                sleep(100);
+                robot.strafeRight(1.0);
+                sleep(150); //replace this with a strafe using encoders if possible
+                robot.stopMotors();
+                sleep(250);
+
+                robot.gyroDrive(.7, 35, 0);
+                sleep(250);
 
                 robot.stoneClaw.setPosition(0.1);
-                sleep(100);
+                sleep(1000);
+
+                //lift
+
+                robot.gyroDrive(1.0, -18, 0);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -90);
+                sleep(250);
+
+                robot.gyroDrive(.7, 78, -90);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -180);
+                sleep(250);
+
+                robot.gyroDrive(1.0, -10, -180);
+                sleep(250);
+
+                while(robot.digitalTouch.getState() == true){
+                    robot.drive(-.1);
+                }
+                robot.stopMotors();
+                sleep(250);
+
+                //FOUNDATION CLAW POSITION
+
+                robot.gyroTurn(.3, -90);
+
             }
             if (valRight == 0 && valLeft > 0 && valMid > 0){
                 robot.strafeRight(1.0);
-                sleep(1000); //replace this with a strafe using encoders if possible
+                sleep(300); //replace this with a strafe using encoders if possible
+                robot.stopMotors();
+                sleep(250);
 
-                robot.gyroDrive(1.0, 48, 90);
-                sleep(100);
+                robot.gyroDrive(1.0, 35, 0);
+                sleep(250);
 
                 robot.stoneClaw.setPosition(0.1);
-                sleep(100);
+                sleep(250);
+
+                //lift
+
+                robot.gyroDrive(1.0, -18, 0);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -90);
+                sleep(250);
+
+                robot.gyroDrive(.7, 78, -90);
+                sleep(250);
+
+                robot.gyroTurn(0.3, -180);
+                sleep(250);
+
+                robot.gyroDrive(1.0, -10, -180);
+                sleep(250);
+
+                while(robot.digitalTouch.getState() == true){
+                    robot.drive(-.1);
+                }
+                robot.stopMotors();
+                sleep(250);
+
+                //FOUNDATION CLAW POSITION
+
+                robot.gyroTurn(.3, -90);
             }
         }
     }
