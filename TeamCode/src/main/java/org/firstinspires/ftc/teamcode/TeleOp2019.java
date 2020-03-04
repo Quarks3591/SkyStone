@@ -160,13 +160,13 @@ public class TeleOp2019 extends OpMode
             {
                 foundationToggle = 2;
                 foundationClawRight.setPosition(.7);
-                foundationClawLeft.setPosition(.7);
+                foundationClawLeft.setPosition(.2);
             }
             if (foundationToggle == 3)
             {
                 foundationToggle = 0;
                 foundationClawRight.setPosition(0.2);
-                foundationClawLeft.setPosition(0.2);
+                foundationClawLeft.setPosition(0.7);
             }
         }
         //Slowmo toggle
