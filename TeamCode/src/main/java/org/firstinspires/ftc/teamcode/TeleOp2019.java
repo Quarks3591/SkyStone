@@ -23,7 +23,18 @@ public class TeleOp2019 extends OpMode
     int foundationToggle = 0;
     int slowmoToggle = 0;
 
+    static final double COUNTS_PER_MOTOR_REV = 383.6;    // 5202 Series Yellow Jacket Planetary Gear Motor
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double SPOOL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    // Calculates number of encoder counts per inch
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (SPOOL_DIAMETER_INCHES * 3.1415);
+
     boolean slowmo = false;
+
+    public static int BLOCK_HEIGHT = (int) (5 * COUNTS_PER_INCH); // sets block height in encoder counts
+    int liftTargetUp = lift.getCurrentPosition() + BLOCK_HEIGHT;
+    int liftTargetDown = lift.getCurrentPosition() - BLOCK_HEIGHT;
 
     public void init()
     {
@@ -130,22 +141,18 @@ public class TeleOp2019 extends OpMode
             }
         }
 
-        //lift
-        if(gamepad1.right_trigger > 0.1)
+        // Lift
+        if (gamepad1.right_bumper)
         {
-            lift.setPower(.5);
+            lift.setTargetPosition(liftTargetUp);
         }
-        if(gamepad1.left_trigger > 0.1)
+        if (gamepad1.left_bumper)
         {
-            lift.setPower(-.5);
-        }
-        else
-        {
-            lift.setPower(0);
+            lift.setTargetPosition(liftTargetDown);
         }
 
         //Foundation stoneClaw
-        if(gamepad1.right_bumper)
+        if(gamepad1.x)
         {
             if(foundationToggle == 0)
             {
