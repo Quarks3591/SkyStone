@@ -56,8 +56,9 @@ public class TeleOp2019 extends OpMode
 
         stoneClaw.scaleRange(0, 1);
 
-        stoneClaw.setPosition(.6);
-        foundationClawRight.setPosition(.7);
+        stoneClaw.setPosition(0);
+        foundationClawRight.setPosition(0.2);
+        foundationClawLeft.setPosition(0.7);
     }
     public void loop()
     {
@@ -119,13 +120,13 @@ public class TeleOp2019 extends OpMode
             if (clawToggle == 1)
             {
                 clawToggle = 2;
-                stoneClaw.setPosition(.7);
+                stoneClaw.setPosition(1);
             }
 
             if (clawToggle == 3)
             {
                 clawToggle = 0;
-                stoneClaw.setPosition(.1);
+                stoneClaw.setPosition(0);
             }
         }
 
