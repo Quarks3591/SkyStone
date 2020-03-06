@@ -52,8 +52,6 @@ public class TeleOp2019 extends OpMode
         foundationClawRight = hardwareMap.servo.get("foundationRight");
         foundationClawLeft = hardwareMap.servo.get("foundationLeft");
 
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         stoneClaw.scaleRange(0, 1);
@@ -122,20 +120,20 @@ public class TeleOp2019 extends OpMode
             if (clawToggle == 1)
             {
                 clawToggle = 2;
-                stoneClaw.setPosition(.8);
+                stoneClaw.setPosition(1);
             }
 
             if (clawToggle == 3)
             {
                 clawToggle = 0;
-                stoneClaw.setPosition(.6);
+                stoneClaw.setPosition(0);
             }
         }
 
         //lift
         if(gamepad1.right_trigger > 0.1)
         {
-            lift.setPower(.05);
+            lift.setPower(.5);
         }
         if(gamepad1.left_trigger > 0.1)
         {
