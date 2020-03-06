@@ -32,16 +32,14 @@ public class AutoRolla extends LinearOpMode {
     Gyro gyro;
     DriveTrain robot;
 
-    // These constants define the desired driving/control characteristics
-    // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.3;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.15;     // Nominal half speed for better accuracy.
-
-    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-
     //init input variables
-    private String color = "Red";
-    private String side = "Left";
+    private String color = "Blue";
+    private int blocks = 2;
+    int cm = 1; //Color Modifier
+    int sm = 0; //Skystone Modifier
+
+    public static int BLOCK_WIDTH = 8; //in inches
+    public static double DRIVE_SPEED = .7;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -94,9 +92,9 @@ public class AutoRolla extends LinearOpMode {
             if (gamepad1.b || gamepad2.b) color = "Red";
             telemetry.addData("Color {Blue (X), Red (B)}", color);
 
-            if(gamepad1.a || gamepad2.a) side = "Left";
-            if (gamepad1.y || gamepad2.y) side = "Right";
-            telemetry.addData("Side {Left (A), Right (Y)}", side);
+            if(gamepad1.a || gamepad2.a) blocks--;
+            if (gamepad1.y || gamepad2.y) blocks++;
+            telemetry.addData("Blocks { - (A), + (Y)}", blocks);
 
             telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
 
@@ -107,10 +105,15 @@ public class AutoRolla extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        telemetry.addData("Mode", "running");
-        telemetry.update();
-
         sleep(1000);
+
+        if (color == "Red")
+            cm = -1;
+        if (valMid == 0 && valLeft > 0 && valRight > 0)
+            sm = 1;
+        if (valRight == 0 && valLeft > 0 && valMid > 0)
+            sm = 2;
+
 
         //loop until end of autonomous period
         while (opModeIsActive()) {
@@ -124,27 +127,30 @@ public class AutoRolla extends LinearOpMode {
             sleep(100);
 
             if (valLeft == 0 && valMid > 0 && valRight > 0){
-                robot.gyroDrive(1.0, 35, 0);
+                robot.strafeRight(1.0);
+                sleep(150*sm);
+                robot.stopMotors();
+                sleep(250);
+
+                robot.gyroDrive(DRIVE_SPEED, 35, 0);
                 sleep(250);
 
                 robot.stoneClaw.setPosition(0.1);
                 sleep(250);
 
-                //lift
-
-                robot.gyroDrive(1.0, -18, 0);
+                robot.gyroDrive(DRIVE_SPEED, -18, 0);
                 sleep(250);
 
-                robot.gyroTurn(0.3, -90);
+                robot.gyroTurn(0.3, -90*cm);
                 sleep(250);
 
-                robot.gyroDrive(.7, 78, -90);
+                robot.gyroDrive(DRIVE_SPEED, 86 - sm*BLOCK_WIDTH, -90*cm);
                 sleep(250);
 
-                robot.gyroTurn(0.3, -180);
+                robot.gyroTurn(0.3, -180*cm);
                 sleep(250);
 
-                robot.gyroDrive(1.0, -10, -180);
+                robot.gyroDrive(DRIVE_SPEED, -10, -180*cm);
                 sleep(250);
 
                 while(robot.digitalTouch.getState() == true){
@@ -153,88 +159,53 @@ public class AutoRolla extends LinearOpMode {
                 robot.stopMotors();
                 sleep(250);
 
-                //FOUNDATION CLAW POSITION
-
-                robot.gyroTurn(.3, -90);
-            }
-            if (valMid == 0 && valLeft > 0 && valRight > 0){
-                robot.strafeRight(1.0);
-                sleep(150); //replace this with a strafe using encoders if possible
-                robot.stopMotors();
-                sleep(250);
-
-                robot.gyroDrive(.7, 35, 0);
-                sleep(250);
-
-                robot.stoneClaw.setPosition(0.1);
+                robot.foundationClawRight.setPosition(0.7);
+                robot.foundationClawLeft.setPosition(0.2);
                 sleep(1000);
 
-                //lift
+                robot.gyroTurn(.3, -90*cm);
 
-                robot.gyroDrive(1.0, -18, 0);
-                sleep(250);
+                robot.gyroDrive(DRIVE_SPEED/2, -12, -90*cm);
 
-                robot.gyroTurn(0.3, -90);
-                sleep(250);
+                robot.foundationClawRight.setPosition(0.2);
+                robot.foundationClawLeft.setPosition(0.7);
+                sleep(1000);
 
-                robot.gyroDrive(.7, 78, -90);
-                sleep(250);
+                robot.gyroDrive(DRIVE_SPEED, 9, -90*cm);
 
-                robot.gyroTurn(0.3, -180);
-                sleep(250);
-
-                robot.gyroDrive(1.0, -10, -180);
-                sleep(250);
-
-                while(robot.digitalTouch.getState() == true){
-                    robot.drive(-.1);
-                }
-                robot.stopMotors();
-                sleep(250);
-
-                //FOUNDATION CLAW POSITION
-
-                robot.gyroTurn(.3, -90);
-
-            }
-            if (valRight == 0 && valLeft > 0 && valMid > 0){
-                robot.strafeRight(1.0);
-                sleep(300); //replace this with a strafe using encoders if possible
-                robot.stopMotors();
-                sleep(250);
-
-                robot.gyroDrive(1.0, 35, 0);
-                sleep(250);
-
-                robot.stoneClaw.setPosition(0.1);
-                sleep(250);
+                robot.gyroTurn(.3, 90*cm);
 
                 //lift
 
-                robot.gyroDrive(1.0, -18, 0);
-                sleep(250);
+                robot.gyroDrive(DRIVE_SPEED, 9, 90*cm);
 
-                robot.gyroTurn(0.3, -90);
-                sleep(250);
+                robot.stoneClaw.setPosition(.5);
 
-                robot.gyroDrive(.7, 78, -90);
-                sleep(250);
-
-                robot.gyroTurn(0.3, -180);
-                sleep(250);
-
-                robot.gyroDrive(1.0, -10, -180);
-                sleep(250);
-
-                while(robot.digitalTouch.getState() == true){
-                    robot.drive(-.1);
-                }
+                robot.strafeLeft(DRIVE_SPEED);
+                sleep(500);
                 robot.stopMotors();
                 sleep(250);
+                if(blocks >= 2) {
+                    robot.gyroDrive(DRIVE_SPEED, 122 - sm * BLOCK_WIDTH, -90 * cm);
 
-                //FOUNDATION CLAW POSITION
+                    robot.gyroTurn(.3, -90*cm);
 
-                robot.gyroTurn(.3, -90);
+                    robot.gyroDrive(DRIVE_SPEED, 35, 0);
+                    sleep(250);
+
+                    robot.stoneClaw.setPosition(0.1);
+                    sleep(250);
+
+                    robot.gyroDrive(DRIVE_SPEED, -18, 0);
+                    sleep(250);
+
+                    robot.gyroTurn(0.3, -90*cm);
+                    sleep(250);
+
+                    robot.gyroDrive(DRIVE_SPEED, 122 - sm*BLOCK_WIDTH, -90*cm);
+                    sleep(250);
+
+                }
             }
         }
     }
