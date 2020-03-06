@@ -108,8 +108,8 @@ public class DriveTrain {
         foundationClawRight = hwm.get(Servo.class, "foundationRight");
 
         //servos
-        stoneClaw.setPosition(0);
-        foundationClawRight.setPosition(.2);
+        stoneClaw.setPosition(.7);
+        foundationClawRight.setPosition(.7);
         foundationClawLeft.setPosition(.7);
 
         //touch sensor
