@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class TeleOp2019 extends OpMode
+public class TeleOp2019StepsTest extends OpMode
 {
     //Wheels
     DcMotor frontRightMotor;
@@ -23,14 +23,14 @@ public class TeleOp2019 extends OpMode
     int foundationToggle = 0;
     int slowmoToggle = 0;
 
-    static final double COUNTS_PER_MOTOR_REV = 383.6;    // 5202 Series Yellow Jacket Planetary Gear Motor
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
-    static final double SPOOL_DIAMETER_INCHES = 1.2;     // For figuring circumference
+    static final double COUNTS_PER_MOTOR_REV = 145.6;    // 5202 Series Yellow Jacket Planetary Gear Motor
+    static final double SPOOL_DIAMETER_INCHES = .6;     // For figuring circumference
     // Calculates number of encoder counts per inch
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (2 * SPOOL_DIAMETER_INCHES * 3.1415);
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) /
+            (SPOOL_DIAMETER_INCHES * 3.5 * 3.1415);
 
     boolean slowmo = false;
+    boolean unpressed = false;
 
     public int BLOCK_HEIGHT = (int) (5 * COUNTS_PER_INCH); // sets block height in encoder counts
 
@@ -61,16 +61,22 @@ public class TeleOp2019 extends OpMode
         foundationClawRight = hardwareMap.servo.get("foundationRight");
         foundationClawLeft = hardwareMap.servo.get("foundationLeft");
 
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setTargetPosition(lift.getCurrentPosition());
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         stoneClaw.scaleRange(0, 1);
 
-        stoneClaw.setPosition(0);
+        stoneClaw.setPosition(.3);
         foundationClawRight.setPosition(0.2);
         foundationClawLeft.setPosition(0.7);
+
+        telemetry.addData("BLOCK HEIGHT: ", BLOCK_HEIGHT);
+        telemetry.update();
     }
+
     public void loop()
     {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -82,8 +88,8 @@ public class TeleOp2019 extends OpMode
         double frontRightPower = y - x - rx;
         double backRightPower = y + x - rx;
 
-        int liftTargetUp = lift.getCurrentPosition() + BLOCK_HEIGHT;
-        int liftTargetDown = lift.getCurrentPosition() - BLOCK_HEIGHT;
+        int liftTargetUp;
+        int liftTargetDown;
 
         // Put powers in the range of -1 to 1 only if they aren't already (not
         // checking would cause us to always drive at full speed)
@@ -145,22 +151,41 @@ public class TeleOp2019 extends OpMode
         }
 
         //lift
-        //down
-        if(gamepad1.left_bumper)
+        if(gamepad1.left_bumper && !unpressed)
         {
+            liftTargetDown = lift.getCurrentPosition() - BLOCK_HEIGHT;
+            lift.setTargetPosition(liftTargetDown);
             lift.setPower(.3);
+            unpressed = true;
         }
-        //up
-        if (gamepad1.right_bumper)
+        else if (!gamepad1.left_bumper && unpressed)
         {
-            lift.setPower(-.5);
+            unpressed = false;
         }
-        else
+        if (gamepad1.right_bumper && !unpressed)
         {
-            lift.setPower(0);
+            liftTargetUp = lift.getCurrentPosition() + BLOCK_HEIGHT;
+            lift.setTargetPosition(liftTargetUp);
+            lift.setPower(-.7);
+            unpressed = true;
+        }
+        else if (!gamepad1.right_bumper && unpressed)
+        {
+            unpressed = false;
+        }
+        if (gamepad1.left_trigger > 0.5 && !unpressed)
+        {
+            lift.setTargetPosition(0);
+            lift.setPower(.5);
+            unpressed = true;
+        }
+        else if (gamepad1.left_trigger < 0.3 && unpressed)
+        {
+            unpressed = false;
         }
 
-        //Foundation stoneClaw
+
+        //Foundation Claw
         if(gamepad1.x)
         {
             if(foundationToggle == 0)

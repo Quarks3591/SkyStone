@@ -109,6 +109,9 @@ public class DriveTrain {
         foundationClawLeft = hwm.get(Servo.class, "foundationLeft");
         foundationClawRight = hwm.get(Servo.class, "foundationRight");
 
+        lift.setTargetPosition(lift.getCurrentPosition());
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         //servos
         stoneClaw.setPosition(0);
         foundationClawRight.setPosition(.2);
@@ -222,10 +225,7 @@ public class DriveTrain {
 
         setTargetPosition(moveCounts);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        runToPosition();
 
         // start motion.
         speed = Range.clip(Math.abs(speed), 0.0, 1.0);
