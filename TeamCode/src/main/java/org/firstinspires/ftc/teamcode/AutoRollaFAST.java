@@ -2,19 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -27,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous
-public class AutoRolla extends LinearOpMode {
+public class AutoRollaFAST extends LinearOpMode {
     Orientation lastAngles = new Orientation();
     double correction;
 
@@ -36,12 +31,11 @@ public class AutoRolla extends LinearOpMode {
 
     //init input variables
     private String color = "Blue";
-    private int blocks = 1;
     int cm = 1; //Color Modifier
     int sm = 0; //Skystone Modifier
 
     public static int BLOCK_WIDTH = 8; //in inches
-    public static int BLOCK_HEIGHT = 120; //in encoder ticks
+    public static int BLOCK_HEIGHT = 150; //in encoder ticks
     public static double DRIVE_SPEED = 1.0;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -97,10 +91,6 @@ public class AutoRolla extends LinearOpMode {
             if (gamepad1.b || gamepad2.b) color = "Red";
             telemetry.addData("Color {Blue (X), Red (B)}", color);
 
-            if (gamepad1.a || gamepad2.a) blocks = 1;
-            if (gamepad1.y || gamepad2.y) blocks = 2;
-            telemetry.addData("Blocks { - (A), + (Y)}", blocks);
-
             telemetry.addData("Values", valLeft + "   " + valMid + "   " + valRight);
 
             telemetry.update();
@@ -135,7 +125,7 @@ public class AutoRolla extends LinearOpMode {
             robot.stopMotors();
             sleep(100);
 
-            robot.gyroDrive(DRIVE_SPEED, 35, 0);
+            robot.gyroDrive(DRIVE_SPEED, 34, 0);
             sleep(100);
 
             robot.stoneClaw.setPosition(0.8);
@@ -144,20 +134,40 @@ public class AutoRolla extends LinearOpMode {
             robot.gyroDrive(DRIVE_SPEED, -18, 0);
             sleep(100);
 
-            robot.gyroTurn(0.3, -90 * cm);
+            robot.gyroTurn(.3, -15);
             sleep(100);
 
-            robot.gyroDrive(DRIVE_SPEED, 94 - sm * (BLOCK_WIDTH / 2), -90 * cm);
+            if (color == "Blue") {
+                robot.strafeRight(DRIVE_SPEED);
+                sleep(2000);
+                robot.stopMotors();
+                sleep(100);
+            } else if (color == "Red") {
+                robot.strafeLeft(DRIVE_SPEED);
+                sleep(2000);
+                robot.stopMotors();
+                sleep(100);
+            }
+
+            robot.lift.setTargetPosition(BLOCK_HEIGHT);
+            robot.lift.setPower(-1);
+            while (robot.lift.getCurrentPosition() < robot.lift.getTargetPosition()) {
+                sleep(100);
+            }
+
+            robot.gyroDrive(DRIVE_SPEED / 2, 28, 0);
             sleep(100);
 
-            robot.gyroTurn(0.3, -180 * cm);
+            robot.stoneClaw.setPosition(.3);
+            sleep(1000);
+
+            robot.gyroDrive(DRIVE_SPEED, -15, 0);
             sleep(100);
 
-            robot.gyroDrive(DRIVE_SPEED / 2, -10, -180 * cm);
-            sleep(100);
+            robot.gyroTurn(.3, 180);
 
             while (robot.digitalTouch.getState() == true) {
-                robot.drive(-.1);
+                robot.drive(-.2);
             }
             robot.stopMotors();
             sleep(100);
@@ -166,7 +176,8 @@ public class AutoRolla extends LinearOpMode {
             robot.foundationClawLeft.setPosition(0.25);
             sleep(1000);
 
-            robot.gyroDrive(DRIVE_SPEED, 48, -180 * cm);
+            robot.gyroDrive(DRIVE_SPEED, 54, -180 * cm);
+            sleep(100);
 
             robot.gyroTurn(.3, 90 * cm);
             sleep(100);
@@ -178,52 +189,11 @@ public class AutoRolla extends LinearOpMode {
             robot.foundationClawLeft.setPosition(0.7);
             sleep(1000);
 
-            robot.gyroDrive(DRIVE_SPEED, 9, 90 * cm);
+            robot.lift.setTargetPosition(0);
+            robot.lift.setPower(.7);
+
+            robot.gyroDrive(DRIVE_SPEED, 36, 90 * cm);
             sleep(100);
-
-            robot.gyroTurn(.3, -90 * cm);
-            sleep(100);
-
-            robot.lift.setTargetPosition(BLOCK_HEIGHT);
-            robot.lift.setPower(-.5);
-            while (robot.lift.getCurrentPosition() < robot.lift.getTargetPosition()) {
-                sleep(100);
-            }
-
-            robot.gyroDrive(DRIVE_SPEED / 4, 9, -90 * cm);
-            sleep(1000);
-
-            robot.stoneClaw.setPosition(.3);
-            sleep(1000);
-
-            robot.strafeRight(DRIVE_SPEED);
-            sleep(1000);
-            robot.stopMotors();
-            sleep(100);
-
-            if (blocks >= 2) {
-                robot.gyroDrive(DRIVE_SPEED, 122 - sm * BLOCK_WIDTH, -90 * cm);
-                sleep(100);
-
-                robot.gyroTurn(.3, -90 * cm);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED, 35, 0);
-                sleep(100);
-
-                robot.stoneClaw.setPosition(0.8);
-                sleep(1000);
-
-                robot.gyroDrive(DRIVE_SPEED, -18, 0);
-                sleep(100);
-
-                robot.gyroTurn(0.3, -90 * cm);
-                sleep(100);
-
-                robot.gyroDrive(DRIVE_SPEED, 122 - sm * BLOCK_WIDTH, -90 * cm);
-                sleep(100);
-
-            }
         }
 
     }

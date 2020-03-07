@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class TeleOp2019 extends OpMode
-{
+public class TeleOp2019 extends OpMode {
     //Wheels
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
@@ -34,8 +33,7 @@ public class TeleOp2019 extends OpMode
 
     public int BLOCK_HEIGHT = (int) (5 * COUNTS_PER_INCH); // sets block height in encoder counts
 
-    public void init()
-    {
+    public void init() {
         //Wheel Initiation
         frontRightMotor = hardwareMap.dcMotor.get("front_right");
         backRightMotor = hardwareMap.dcMotor.get("back_right");
@@ -71,8 +69,8 @@ public class TeleOp2019 extends OpMode
         foundationClawRight.setPosition(0.2);
         foundationClawLeft.setPosition(0.7);
     }
-    public void loop()
-    {
+
+    public void loop() {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = -gamepad1.left_stick_x * 1.5;
         double rx = gamepad1.right_stick_x;
@@ -89,7 +87,7 @@ public class TeleOp2019 extends OpMode
         // checking would cause us to always drive at full speed)
 
         if (Math.abs(frontLeftPower) > 1 || Math.abs(backLeftPower) > 1 ||
-                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1 ) {
+                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1) {
             // Find the largest power
             double max = 0;
             max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
@@ -104,41 +102,33 @@ public class TeleOp2019 extends OpMode
             backRightPower /= max;
         }
 
-        if (!slowmo)
-        {
+        if (!slowmo) {
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
         }
-        if (slowmo)
-        {
-            frontLeftMotor.setPower(frontLeftPower*.2);
-            backLeftMotor.setPower(backLeftPower*.2);
-            frontRightMotor.setPower(frontRightPower*.2);
-            backRightMotor.setPower(backRightPower*.2);
+        if (slowmo) {
+            frontLeftMotor.setPower(frontLeftPower * .2);
+            backLeftMotor.setPower(backLeftPower * .2);
+            frontRightMotor.setPower(frontRightPower * .2);
+            backRightMotor.setPower(backRightPower * .2);
         }
         //stoneClaw
-        if(gamepad1.a)
-        {
-            if(clawToggle == 0)
-            {
+        if (gamepad1.a) {
+            if (clawToggle == 0) {
                 clawToggle = 1;
             }
-            if(clawToggle == 2)
-            {
+            if (clawToggle == 2) {
                 clawToggle = 3;
             }
-        }
-        else {
-            if (clawToggle == 1)
-            {
+        } else {
+            if (clawToggle == 1) {
                 clawToggle = 2;
                 stoneClaw.setPosition(.8);
             }
 
-            if (clawToggle == 3)
-            {
+            if (clawToggle == 3) {
                 clawToggle = 0;
                 stoneClaw.setPosition(.3);
             }
@@ -146,69 +136,52 @@ public class TeleOp2019 extends OpMode
 
         //lift
         //down
-        if(gamepad1.left_bumper)
-        {
+        if (gamepad1.left_bumper) {
             lift.setPower(.3);
         }
         //up
-        if (gamepad1.right_bumper)
-        {
+        if (gamepad1.right_bumper) {
             lift.setPower(-.5);
-        }
-        else
-        {
+        } else {
             lift.setPower(0);
         }
 
         //Foundation stoneClaw
-        if(gamepad1.x)
-        {
-            if(foundationToggle == 0)
-            {
+        if (gamepad1.x) {
+            if (foundationToggle == 0) {
                 foundationToggle = 1;
             }
-            if(foundationToggle == 2)
-            {
+            if (foundationToggle == 2) {
                 foundationToggle = 3;
             }
-        }
-        else {
-            if (foundationToggle == 1)
-            {
+        } else {
+            if (foundationToggle == 1) {
                 foundationToggle = 2;
                 foundationClawRight.setPosition(.65);
                 foundationClawLeft.setPosition(.25);
             }
-            if (foundationToggle == 3)
-            {
+            if (foundationToggle == 3) {
                 foundationToggle = 0;
                 foundationClawRight.setPosition(0.2);
                 foundationClawLeft.setPosition(0.7);
             }
         }
         //Slowmo toggle
-        if(gamepad1.b)
-        {
-            if (slowmoToggle ==0)
-            {
+        if (gamepad1.b) {
+            if (slowmoToggle == 0) {
                 slowmoToggle = 1;
             }
-            if (slowmoToggle == 2)
-            {
+            if (slowmoToggle == 2) {
                 slowmoToggle = 3;
             }
 
-        }
-        else
-        {
-            if (slowmoToggle == 1)
-            {
+        } else {
+            if (slowmoToggle == 1) {
                 slowmoToggle = 2;
                 slowmo = true;
             }
 
-            if (slowmoToggle == 3)
-            {
+            if (slowmoToggle == 3) {
                 slowmoToggle = 0;
                 slowmo = false;
             }
